@@ -2,13 +2,16 @@ using MongoDB.Driver;
 using StreamingService.Model;
 
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine("PROGRAM STARTED");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+
+
 // Open a connection to the MongoDB server
-string connectionString = "mongodb://mongodb:27017/";
+string connectionString = "mongodb://127.0.0.1:27017/";
 
 // Create a MongoClient instance
 var client = new MongoClient(connectionString);
