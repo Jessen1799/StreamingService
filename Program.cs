@@ -1,3 +1,5 @@
+using StreamingService.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,5 +22,10 @@ app.UseHttpsRedirection();
 
 
 //app.MapEndpoints();
+
+MovieService ms = new MovieService();
+ms.doStuff();
+ms.PrintAllMovies();
+
 
 app.Run();
