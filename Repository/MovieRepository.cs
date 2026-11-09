@@ -1,9 +1,24 @@
-﻿using StreamingService.Model;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using StreamingService.Model;
 
 namespace StreamingService.Repository
 {
     public class MovieRepository : IMovieRepository
     {
+        private readonly IMongoCollection<Movie> _movies;
+
+        public MovieRepository()
+        {
+            var connectionString = "mongodb://localhost:27017/";
+            
+            MongoClient testClient = new MongoClient(connectionString);
+
+            var database = testClient.GetDatabase("dbStreaming");
+            
+            _movies = database.GetCollection<Movie>("Movies");
+            
+        }
      
         public void AddMovie(Movie movie)
         {
@@ -18,13 +33,13 @@ namespace StreamingService.Repository
         List<Movie> movies;
         public List<Movie> GetAllMovies()
         {
-            //return movies = MockDataBase.GetAllMovies();
             return movies;
+
         }
 
-        public Movie GetMovie(Movie movie)
+        public async Task<Movie> GetMovie(string title)
         {
-            throw new NotImplementedException();
+            return await _movies.Find(m => m.Title == title).FirstOrDefaultAsync();
         }
 
         public void Updatemovie(Movie movieToUpdate, Movie updatedMovie)

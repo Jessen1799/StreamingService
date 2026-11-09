@@ -15,8 +15,6 @@ namespace StreamingService.Model
             this.Id = id;
             this.Title = title;
             this.Genre = genre;
-
-
         }
     }
 }
