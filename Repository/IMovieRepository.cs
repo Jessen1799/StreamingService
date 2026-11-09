@@ -6,8 +6,6 @@ namespace StreamingService.Repository
     {
         void AddMovie(Movie movie);
         Task<Movie> GetMovie(string title);
-        void DeleteMovie(Movie movie);
-        void Updatemovie(Movie movieToUpdate, Movie updatedMovie);
         List<Movie> GetAllMovies();
 
     }

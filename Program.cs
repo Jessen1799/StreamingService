@@ -3,17 +3,25 @@ using StreamingService.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-MovieRepository n = new MovieRepository();
+IMovieRepository n = new MovieRepository();
 
+//Get specific move based off title test from db
 Movie result = await n.GetMovie("Star Wars");
-List<Movie> result2 = n.GetAllMovies();
+Console.WriteLine($"The metadata is: {result.Title}, {result.Genre}");
 
+
+//GetAll test from db
+List<Movie> result2 = n.GetAllMovies();
 foreach (var movie in result2)
 {
     Console.WriteLine(movie.Title);
 }
 
-Console.WriteLine($"The metadata is: {result.Title}, {result.Genre}");
+//Insert test into db
+//Movie testInsert = new Movie(13, "Love at first sight", "Romantic");
+//n.AddMovie(testInsert);
+//Console.WriteLine("Inserted into database?");
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
