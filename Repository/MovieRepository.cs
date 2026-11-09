@@ -29,12 +29,10 @@ namespace StreamingService.Repository
         {
             //MockDataBase.DeleteMovie(movie.Id);
         }
-
-        List<Movie> movies;
         public List<Movie> GetAllMovies()
         {
-            return movies;
-
+            var filter = Builders<Movie>.Filter.Empty;
+            return _movies.Find(filter).ToList();
         }
 
         public async Task<Movie> GetMovie(string title)
