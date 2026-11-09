@@ -1,7 +1,5 @@
-using System.Collections.ObjectModel;
 using MongoDB.Driver;
 using StreamingService.Model;
-using StreamingService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +17,7 @@ if (app.Environment.IsDevelopment())
     { options.SwaggerEndpoint("/openapi/v1.json", app.Environment.ApplicationName); });
 }
 
-var connectionString = "mongodb://localhost:27017";
+var connectionString = "mongodb://localhost:27017/";
 MongoClient testClient = new MongoClient(connectionString);
 
 var database = testClient.GetDatabase("dbStreamingService"); 
@@ -33,10 +31,6 @@ app.UseHttpsRedirection();
 
 
 //app.MapEndpoints();
-
-MovieService ms = new MovieService();
-ms.doStuff();
-ms.PrintAllMovies();
 
 
 app.Run();
