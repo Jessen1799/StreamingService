@@ -6,6 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 MovieRepository n = new MovieRepository();
 
 Movie result = await n.GetMovie("Star Wars");
+List<Movie> result2 = n.GetAllMovies();
+
+foreach (var movie in result2)
+{
+    Console.WriteLine(movie.Title);
+}
 
 Console.WriteLine($"The metadata is: {result.Title}, {result.Genre}");
 // Add services to the container.
