@@ -1,8 +1,10 @@
-﻿
+﻿using MongoDB.Bson.Serialization.Attributes;
+
 namespace StreamingService.Model
 {
     public class Movie
     {
+        [BsonId]
         public int Id { get; set; }
         public string Title { get; set; }
         public string Genre { get; set; }
