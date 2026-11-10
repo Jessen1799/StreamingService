@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using StreamingService.Endpoint.DTO;
 
 namespace StreamingService.Model
 {
@@ -12,9 +13,16 @@ namespace StreamingService.Model
 
         public Movie(int id, string title, string genre)
         {
-            this.Id = id;
-            this.Title = title;
-            this.Genre = genre;
+            Id = id;
+            Title = title;
+            Genre = genre;
+        }
+        
+        public Movie(MovieDTO movieDTO)
+        {
+            Id = movieDTO.Id;
+            Title = movieDTO.Title;
+            Genre = movieDTO.Genre;
         }
     }
 }

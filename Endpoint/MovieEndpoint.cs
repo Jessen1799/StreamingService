@@ -1,4 +1,5 @@
-﻿using StreamingService.Model;
+﻿using StreamingService.Endpoint.DTO;
+using StreamingService.Model;
 using StreamingService.Repository;
 
 namespace StreamingService.Endpoint
@@ -11,7 +12,7 @@ namespace StreamingService.Endpoint
             {
                 var movie = await repository.GetMovie(title);
                 
-                return Results.Ok(movie);
+                return Results.Ok(new MovieDTO(movie));
                 
             }).WithName("GetSpecificMovie");
             
@@ -24,9 +25,9 @@ namespace StreamingService.Endpoint
                 
             }).WithName("GetAllMovies");
 
-            endpoints.MapPost("/movie", (Movie movie, IMovieRepository repository) =>
+            endpoints.MapPost("/movie", (MovieDTO movie, IMovieRepository repository) =>
             {
-                repository.AddMovie(movie);
+                repository.AddMovie(new Movie(movie));
 
                 return Results.Ok(movie);
             });
