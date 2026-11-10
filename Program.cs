@@ -1,5 +1,7 @@
+using StreamingService.Endpoint;
 using StreamingService.Model;
 using StreamingService.Repository;
+using StreamingService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,8 +40,9 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
+//app.UseAuthorization();
 
-//app.MapEndpoints();
 
+app.MapMovieEndpoints();
 
 app.Run();
