@@ -1,4 +1,5 @@
-﻿using StreamingService.Repository;
+﻿using StreamingService.Model;
+using StreamingService.Repository;
 
 namespace StreamingService.Endpoint
 {
@@ -9,10 +10,27 @@ namespace StreamingService.Endpoint
             endpoints.MapGet("/movie/{Title}", async (string title, IMovieRepository repository) =>
             {
                 var movie = await repository.GetMovie(title);
-                return movie;
-            }).WithName("GetMovie");
+                
+                return Results.Ok(movie);
+                
+            }).WithName("GetSpecificMovie");
             
             
+            endpoints.MapGet("/movies", (IMovieRepository repository) =>
+            {
+                List<Movie> allMovies = repository.GetAllMovies();
+                
+                return Results.Ok(allMovies);
+                
+            }).WithName("GetAllMovies");
+
+            endpoints.MapPost("/movie", (Movie movie, IMovieRepository repository) =>
+            {
+                repository.AddMovie(movie);
+
+                return Results.Ok(movie);
+            });
+            //Return all endpoints
             return endpoints;
         }
     }
