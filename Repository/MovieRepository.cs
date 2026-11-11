@@ -7,7 +7,6 @@ namespace StreamingService.Repository
 {
     public class MovieRepository : IMovieRepository
     {
-        private readonly IMongoCollection<Movie> _movies;
         private readonly GridFSBucket _bucket;
 
         public MovieRepository()
@@ -18,30 +17,22 @@ namespace StreamingService.Repository
 
             var database = testClient.GetDatabase("dbStreaming");
 
-            _movies = database.GetCollection<Movie>("Movies");
-
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
         }
 
         public async Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType)
         {
-            //Sur på id, fordi det er en int, men den vil have bsonværdi?
-            //forkert metode forsøgt................ Skulle uploade ikke downloade
             var id = await _bucket.UploadFromStreamAsync(fileName, stream);
-            return id; //ObjectId
-        }
-/*
-        public List<Movie> GetAllMovies()
-        {
-            var filter = Builders<Movie>.Filter.Empty;
-            return _movies.Find(filter).ToList();
+            return id;
         }
 
-        public async Task<Movie> GetMovie(string title)
+        public async Task<Movie> SearchMovieAsync(string input)
         {
-            return await _movies.Find(m => m.Title == title).FirstOrDefaultAsync();
+            var filter = Builders<GridFSFileInfo>.Filter.Eq("filename", input);
+            
+            var movie = await _bucket.FindAsync(filter).FirstOrDefaultAsync();
+            
+            
         }
-    }
-    */
     }
 }
