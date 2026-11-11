@@ -8,6 +8,7 @@ namespace StreamingService.Repository
     public class MovieRepository : IMovieRepository
     {
         private readonly IMongoCollection<Movie> _movies;
+        private readonly GridFSBucket _bucket;
 
         public MovieRepository()
         {
@@ -19,13 +20,13 @@ namespace StreamingService.Repository
 
             _movies = database.GetCollection<Movie>("Movies");
             
-            GridFSBucket bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
-            bucket.
+            _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
+            
         }
 
         public void AddMovie(Movie movie)
         {
-            _movies.InsertOne(movie);
+            _bucket.
         }
 
         public List<Movie> GetAllMovies()
