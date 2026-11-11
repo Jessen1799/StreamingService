@@ -19,16 +19,18 @@ namespace StreamingService.Repository
             var database = testClient.GetDatabase("dbStreaming");
 
             _movies = database.GetCollection<Movie>("Movies");
-            
+
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
-            
         }
 
-        public void AddMovie(Movie movie)
+        public async Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType)
         {
-            _bucket.
+            //Sur på id, fordi det er en int, men den vil have bsonværdi?
+            //forkert metode forsøgt................ Skulle uploade ikke downloade
+            var id = await _bucket.UploadFromStreamAsync(fileName, stream);
+            return id; //ObjectId
         }
-
+/*
         public List<Movie> GetAllMovies()
         {
             var filter = Builders<Movie>.Filter.Empty;
@@ -39,5 +41,7 @@ namespace StreamingService.Repository
         {
             return await _movies.Find(m => m.Title == title).FirstOrDefaultAsync();
         }
+    }
+    */
     }
 }
