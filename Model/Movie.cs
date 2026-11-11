@@ -6,15 +6,17 @@ namespace StreamingService.Model
     {
         [BsonId]
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Genre { get; set; }
+        public string FileName { get; set; }
+        public string FileLength { get; set; }
+        public string FileType { get; set; }
 
 
-        public Movie(int id, string title, string genre)
+        public Movie(int id, string fileName, string fileLength, string fileType)
         {
-            this.Id = id;
-            this.Title = title;
-            this.Genre = genre;
+            Id = id;
+            FileName = fileName;
+            FileLength = fileLength;
+            FileType = fileType;
         }
     }
 }

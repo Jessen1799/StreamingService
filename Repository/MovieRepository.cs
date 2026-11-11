@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 using StreamingService.Model;
 
 namespace StreamingService.Repository
@@ -17,6 +18,9 @@ namespace StreamingService.Repository
             var database = testClient.GetDatabase("dbStreaming");
 
             _movies = database.GetCollection<Movie>("Movies");
+            
+            GridFSBucket bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
+            bucket.
         }
 
         public void AddMovie(Movie movie)
