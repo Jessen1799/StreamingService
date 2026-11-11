@@ -7,7 +7,7 @@ namespace StreamingService.Repository
     {
         Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType);
         
-        Task<Movie> SearchMovieAsync(string input);
+        Task<Movie?> SearchMovieAsync(string input);
         /*
         List<Movie> GetAllMovies();
 */

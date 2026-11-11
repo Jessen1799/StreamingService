@@ -26,13 +26,18 @@ namespace StreamingService.Repository
             return id;
         }
 
-        public async Task<Movie> SearchMovieAsync(string input)
+        public async Task<Movie?> SearchMovieAsync(string input)
         {
             var filter = Builders<GridFSFileInfo>.Filter.Eq("filename", input);
             
-            var movie = await _bucket.FindAsync(filter).FirstOrDefaultAsync();
+            var queryResult = await _bucket.Find(filter).FirstOrDefaultAsync();
+
+            if (queryResult == null)
+            {
+                return null;
+            }
             
-            
+            return new Movie(queryResult.Id, queryResult.Filename, queryResult.Length);
         }
     }
 }

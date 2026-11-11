@@ -8,16 +8,14 @@ namespace StreamingService.Model
         [BsonId]
         public ObjectId Id { get; set; }
         public string FileName { get; set; }
-        public int FileLength { get; set; }
-        public string FileType { get; set; }
+        public long FileLength { get; set; }
 
 
-        public Movie(ObjectId id, string fileName, int fileLength, string fileType)
+        public Movie(ObjectId id, string fileName, long fileLength)
         {
             Id = id;
             FileName = fileName;
             FileLength = fileLength;
-            FileType = fileType;
         }
     }
 }
