@@ -22,7 +22,7 @@ namespace StreamingService.Repository
 
         public async Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType)
         {
-            var id = await _bucket.UploadFromStreamAsync(fileName, stream);
+            var id = await _bucket.UploadFromStreamAsync(fileName, stream); 
             return id;
         }
 
