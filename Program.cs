@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-//Builds a service that gives a MovieRepository instance when IMovieRepository is being called for
+//Builds a service that gives a reference to MovieRepository instance when IMovieRepository is asked for
 builder.Services.AddSingleton<IMovieRepository, MovieRepository>();
 
 var app = builder.Build();
