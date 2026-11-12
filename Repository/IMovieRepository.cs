@@ -10,5 +10,7 @@ namespace StreamingService.Repository
         Task<Movie?> SearchMovieAsync(string input);
         
         Task<List<GridFSFileInfo>> GetAllMovies();
+        
+        Task<(Stream Stream, string ContentType, string FileName)> GetMovieStreamAsync(string fileName);
     }
 }
