@@ -1,4 +1,4 @@
-﻿using MongoDB.Bson;
+﻿using System.Collections.ObjectModel;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 using StreamingService.Model;
@@ -40,6 +40,16 @@ namespace StreamingService.Repository
             }
             
             return new Movie(queryResult.Id, queryResult.Filename, queryResult.Length);
+        }
+
+        public async Task<List<Movie>> GetAllMovies()
+        {
+            Collection<GridFSFileInfo> result = new();
+            var filter = Builders<GridFSFileInfo>.Filter.Empty;
+
+            result = await _bucket.FindAsync(filter); //empty
+            
+            
         }
     }
 }
