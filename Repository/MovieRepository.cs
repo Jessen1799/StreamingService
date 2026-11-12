@@ -1,11 +1,9 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 using StreamingService.Model;
 
 namespace StreamingService.Repository
 {
-    
     public class MovieRepository : IMovieRepository
     {
         private readonly GridFSBucket _bucket;
@@ -13,70 +11,46 @@ namespace StreamingService.Repository
         public MovieRepository()
         {
             var connectionString = "mongodb://localhost:27017/";
-
-            MongoClient testClient = new MongoClient(connectionString);
-
-            //var database = testClient.GetDatabase("dbStreaming");
+            var testClient = new MongoClient(connectionString);
 
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
         }
 
-        public async Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType)
+
+        public async Task AddMovieAsync(Stream stream, string fileName)
         {
-            var id = await _bucket.UploadFromStreamAsync(fileName, stream); 
-            return id;
+            await _bucket.UploadFromStreamAsync(fileName, stream);
         }
+
 
         public async Task<Movie?> SearchMovieAsync(string input)
         {
             var filter = Builders<GridFSFileInfo>.Filter.Eq("filename", input);
             
-            var queryResult = await _bucket.Find(filter).FirstOrDefaultAsync();
-
+            GridFSFileInfo queryResult = await _bucket.Find(filter).FirstOrDefaultAsync();
+            
             if (queryResult == null)
             {
                 return null;
             }
-            
+
             return new Movie(queryResult.Id, queryResult.Filename, queryResult.Length);
         }
 
-
-        /// <summary>
-        /// Retrieves a movie from MongoDB GridFS and returns it as a readable stream.
-        /// The movie data is retrieved from the GridFS chunks collection (fs.chunks)
-        /// as the stream is read, avoiding the need to load the entire file into memory.
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public async Task<(Stream Stream, string ContentType, string FileName)> GetMovieStreamAsync(string fileName)
+        public async Task<List<GridFSFileInfo>> GetAllMovies()
         {
-            // Create a filter to find the movie in the GridFS files collection (fs.files)
-            var filter = Builders<GridFSFileInfo>.Filter.Eq(
-                movie => movie.Filename,
-                fileName
-            );
+            //Type: Object that hold info about a stored fs.files
+            List<GridFSFileInfo> result = new();
+            
+            var filter = Builders<GridFSFileInfo>.Filter.Empty;
 
-            // Execute the query and retrieve the first matching file.
-            var queryResult = await (await _bucket.FindAsync(filter))
-                .FirstOrDefaultAsync();
+            //MongoDB uses a cursor to go through a collection. Mechanism that gives us acces to go through the entire collection
+            using IAsyncCursor<GridFSFileInfo> cursor = await _bucket.FindAsync(filter);
 
-            // Check whether the requested movie exists in GridFS.
-            if (queryResult == null)
-            {
-                // Return null values if the file cannot be found.
-                return (null, null, null);
-            }
+            //All documents cursor navigates through is simply put in our list.
+            result = await cursor.ToListAsync();
 
-            var downloadStream = await _bucket.OpenDownloadStreamAsync(queryResult.Id);
-
-            // Retrieve the movie's content type from its metadata.
-            var contentType = queryResult.Metadata?.Contains("contentType") == true
-                ? queryResult.Metadata["contentType"].AsString
-                : "application/octet-stream";
-
-            // Return the download stream, content type and original filename.
-            return (downloadStream, contentType, queryResult.Filename);
+            return result;
         }
     }
 }

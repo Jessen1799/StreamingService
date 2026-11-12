@@ -1,18 +1,14 @@
-﻿using MongoDB.Bson;
+﻿using MongoDB.Driver.GridFS;
 using StreamingService.Model;
 
 namespace StreamingService.Repository
 {
     public interface IMovieRepository
     {
-        Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType);
+        Task AddMovieAsync(Stream stream, string fileName);
         
         Task<Movie?> SearchMovieAsync(string input);
-
-        Task<(Stream Stream, string ContentType, string FileName)> GetMovieStreamAsync(string fileName);
-        /*
-        List<Movie> GetAllMovies();
-*/
-
+        
+        Task<List<GridFSFileInfo>> GetAllMovies();
     }
 }
