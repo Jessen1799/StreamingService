@@ -37,33 +37,24 @@ namespace StreamingService.Endpoint
             });
             
             
-            endpoints.MapGet("/movies/stream/{fileName}", async (string fileName, IMovieRepository repository, 
-                    ILogger<Program> logger) =>
+            endpoints.MapGet("/movies/stream/{fileName}", async (string fileName, IMovieRepository repository) =>
                 {
-                    logger.LogInformation("Movie streaming endpoint called for: {FileName}", fileName);
-
+                    // Retrieve the movie stream, content type and original filename from the repository
                     var (stream, contentType, fileNameResult) =
                         await repository.GetMovieStreamAsync(fileName);
 
+                    // Check whether the requested movie exists.
                     if (stream == null)
                     {
-                        logger.LogWarning("Movie not found in GridFS: {FileName}", fileName);
-
                         return Results.NotFound(new
                         {
                             message = $"Movie '{fileName}' not found."
                         });
                     }
-
-                    logger.LogInformation("Movie found. Streaming: {FileName}", fileNameResult);
-
-                    return Results.Stream(
-                        stream,
-                        contentType: contentType,
-                        enableRangeProcessing: true
-                    );
-                })
-                .WithName("StreamMovieFile");
+                    
+                    // Return the movie as a stream directly to the client.
+                    return Results.Stream(stream, contentType: contentType, enableRangeProcessing: true);
+                }).WithName("StreamMovieFile");
             
             return endpoints;
         }
