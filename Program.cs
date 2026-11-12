@@ -25,7 +25,6 @@ app.UseHttpsRedirection();
 
 //app.UseAuthorization();
 
-
 app.MapMovieEndpoints();
 
 app.Run();

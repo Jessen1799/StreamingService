@@ -1,5 +1,6 @@
-﻿using MongoDB.Bson;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using StreamingService.Endpoint.DTO;
 
 namespace StreamingService.Model
 {
@@ -11,11 +12,19 @@ namespace StreamingService.Model
         public long FileLength { get; set; }
 
 
-        public Movie(ObjectId id, string fileName, long fileLength)
+        public Movie(MovieDTO movieDto)
         {
-            Id = id;
+            Id = movieDto.Id;
+            FileName = movieDto.FileName;
+            FileLength = movieDto.FileLength;
+        }
+        public Movie(ObjectId movieId, string fileName, long fileLength)
+        {
+            Id = movieId;
             FileName = fileName;
             FileLength = fileLength;
         }
+
+        public Movie() { }
     }
 }
