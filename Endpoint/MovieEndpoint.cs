@@ -1,5 +1,4 @@
-﻿using StreamingService.Model;
-using StreamingService.Repository;
+﻿using StreamingService.Repository;
 
 namespace StreamingService.Endpoint
 {
@@ -10,17 +9,16 @@ namespace StreamingService.Endpoint
             endpoints.MapPost("/movie", async (IFormFile file, IMovieRepository repository) =>
             {
                 var uploadStream = file.OpenReadStream();
-
-                var id = await repository.AddMovieAsync(uploadStream, file.FileName, file.ContentType);
-
+                
+                await repository.AddMovieAsync(uploadStream,  file.FileName);
+                
                 return Results.Ok(new
                 {
-                    Id = id.ToString(),
                     FileName = file.FileName,
                     FileType = file.ContentType,
                     FileLength = file.Length
                 });
-
+                
             }).DisableAntiforgery(); //Feljkode 500 internal server error uden. Noget med at endpointet indeholder anti forgery metadata, og der skal være middleware eller sådan noget. Slår bare alt fra i form af sikkerhed omkring det vil jeg tro.
 
             endpoints.MapGet("/movie/{fileName}", async (string fileName, IMovieRepository repository) =>

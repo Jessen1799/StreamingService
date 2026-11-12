@@ -1,11 +1,10 @@
-﻿using MongoDB.Bson;
-using StreamingService.Model;
+﻿using StreamingService.Model;
 
 namespace StreamingService.Repository
 {
     public interface IMovieRepository
     {
-        Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType);
+        Task AddMovieAsync(Stream stream, string fileName);
         
         Task<Movie?> SearchMovieAsync(string input);
         /*

@@ -1,7 +1,5 @@
 using StreamingService.Endpoint;
-using StreamingService.Model;
 using StreamingService.Repository;
-using StreamingService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,22 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+//Builds a service that gives a reference to MovieRepository instance when IMovieRepository is asked for
 builder.Services.AddSingleton<IMovieRepository, MovieRepository>();
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwaggerUI(options =>
-    { options.SwaggerEndpoint("/openapi/v1.json", app.Environment.ApplicationName); });
 }
 app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 
 app.MapMovieEndpoints();
 
