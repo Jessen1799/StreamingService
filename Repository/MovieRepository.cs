@@ -42,23 +42,41 @@ namespace StreamingService.Repository
         }
 
 
+        /// <summary>
+        /// Retrieves a movie from MongoDB GridFS and returns it as a readable stream.
+        /// The movie data is retrieved from the GridFS chunks collection (fs.chunks)
+        /// as the stream is read, avoiding the need to load the entire file into memory.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public async Task<(Stream Stream, string ContentType, string FileName)> GetMovieStreamAsync(string fileName)
         {
-            var filter = Builders<GridFSFileInfo>.Filter.Eq(movie => movie.Filename, fileName);
-            var fileInfo = await (await _bucket.FindAsync(filter)).FirstOrDefaultAsync();
+            // Create a filter to find the movie in the GridFS files collection (fs.files)
+            var filter = Builders<GridFSFileInfo>.Filter.Eq(
+                movie => movie.Filename,
+                fileName
+            );
 
-            if (fileInfo == null)
+            // Execute the query and retrieve the first matching file.
+            var queryResult = await (await _bucket.FindAsync(filter))
+                .FirstOrDefaultAsync();
+
+            // Check whether the requested movie exists in GridFS.
+            if (queryResult == null)
             {
+                // Return null values if the file cannot be found.
                 return (null, null, null);
             }
-            
-            var downloadStream = await _bucket.OpenDownloadStreamByNameAsync(fileName);
-            
-            var contentType = fileInfo.Metadata?.Contains("contentType") == true
-                ? fileInfo.Metadata["contentType"].AsString
+
+            var downloadStream = await _bucket.OpenDownloadStreamAsync(queryResult.Id);
+
+            // Retrieve the movie's content type from its metadata.
+            var contentType = queryResult.Metadata?.Contains("contentType") == true
+                ? queryResult.Metadata["contentType"].AsString
                 : "application/octet-stream";
 
-            return (downloadStream, contentType, fileInfo.Filename);
+            // Return the download stream, content type and original filename.
+            return (downloadStream, contentType, queryResult.Filename);
         }
     }
 }
