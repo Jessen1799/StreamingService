@@ -1,0 +1,18 @@
+Index: Program.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using StreamingService.Endpoint;\r\nusing StreamingService.Repository;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n\r\n// Add services to the container.\r\n// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi\r\nbuilder.Services.AddOpenApi();\r\n\r\n//Builds a service that gives a reference to MovieRepository instance when IMovieRepository is asked for\r\nbuilder.Services.AddSingleton<IMovieRepository, MovieRepository>();\r\n\r\nvar app = builder.Build();\r\n\r\n// Configure the HTTP request pipeline.\r\nif (app.Environment.IsDevelopment())\r\n{\r\n    app.MapOpenApi();\r\n}\r\napp.UseHttpsRedirection();\r\n\r\napp.MapMovieEndpoints();\r\n\r\napp.Run();\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Program.cs b/Program.cs
+--- a/Program.cs	(revision 009ca9c2967f65d16198cc634e6201bb060859e4)
++++ b/Program.cs	(date 1794505603258)
+@@ -3,7 +3,6 @@
+ 
+ var builder = WebApplication.CreateBuilder(args);
+ 
+-
+ // Add services to the container.
+ // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+ builder.Services.AddOpenApi();
