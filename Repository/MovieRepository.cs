@@ -12,18 +12,20 @@ namespace StreamingService.Repository
         public MovieRepository()
         {
             var connectionString = "mongodb://localhost:27017/";
-
-            MongoClient testClient = new MongoClient(connectionString);
-
-            var database = testClient.GetDatabase("dbStreaming");
-
+            var testClient = new MongoClient(connectionString);
+            
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
         }
 
-        public async Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public async Task AddMovieAsync(Stream stream, string fileName)
         {
-            var id = await _bucket.UploadFromStreamAsync(fileName, stream); 
-            return id;
+            await _bucket.UploadFromStreamAsync(fileName, stream); 
         }
 
         public async Task<Movie?> SearchMovieAsync(string input)
