@@ -1,5 +1,4 @@
-﻿using StreamingService.Endpoint.DTO;
-using StreamingService.Model;
+﻿using StreamingService.Model;
 using StreamingService.Repository;
 
 namespace StreamingService.Endpoint
@@ -8,31 +7,55 @@ namespace StreamingService.Endpoint
     {
         public static IEndpointRouteBuilder MapMovieEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/movie/{Title}", async (string title, IMovieRepository repository) =>
+            endpoints.MapPost("/movie", async (IFormFile file, IMovieRepository repository) =>
             {
-                var movie = await repository.GetMovie(title);
+                var uploadStream = file.OpenReadStream();
+
+                var id = await repository.AddMovieAsync(uploadStream, file.FileName, file.ContentType);
+
+                return Results.Ok(new
+                {
+                    Id = id.ToString(),
+                    FileName = file.FileName,
+                    FileType = file.ContentType,
+                    FileLength = file.Length
+                });
+
+            }).DisableAntiforgery(); //Feljkode 500 internal server error uden. Noget med at endpointet indeholder anti forgery metadata, og der skal være middleware eller sådan noget. Slår bare alt fra i form af sikkerhed omkring det vil jeg tro.
+
+            endpoints.MapGet("/movie/{fileName}", async (string fileName, IMovieRepository repository) =>
+            {
+                var movie = await repository.SearchMovieAsync(fileName);
                 
-                return Results.Ok(new MovieDTO(movie));
+                if (movie == null)
+                {
+                    return Results.NotFound();
+                }
                 
-            }).WithName("GetSpecificMovie");
+                return Results.Ok(movie);
+            });
             
             
+            
+            return endpoints;
+
+            /*
             endpoints.MapGet("/movies", (IMovieRepository repository) =>
             {
                 List<Movie> allMovies = repository.GetAllMovies();
-                
+
                 return Results.Ok(allMovies);
-                
+
             }).WithName("GetAllMovies");
 
-            endpoints.MapPost("/movie", (MovieDTO movie, IMovieRepository repository) =>
+            endpoints.MapPost("/movie", (Movie movie, IMovieRepository repository) =>
             {
-                repository.AddMovie(new Movie(movie));
+                repository.AddMovie(movie);
 
                 return Results.Ok(movie);
             });
-            //Return all endpoints
-            return endpoints;
+            //Return all endpoints*/
+            
         }
     }
 }
