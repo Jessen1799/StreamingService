@@ -1,4 +1,5 @@
-﻿using StreamingService.Model;
+﻿using MongoDB.Driver.GridFS;
+using StreamingService.Model;
 
 namespace StreamingService.Repository
 {
@@ -8,6 +9,6 @@ namespace StreamingService.Repository
         
         Task<Movie?> SearchMovieAsync(string input);
         
-        Task<List<Movie>> GetAllMovies();
+        Task<List<GridFSFileInfo>> GetAllMovies();
     }
 }
