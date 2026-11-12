@@ -1,4 +1,6 @@
-﻿using StreamingService.Repository;
+﻿using MongoDB.Driver.GridFS;
+using StreamingService.Model;
+using StreamingService.Repository;
 
 namespace StreamingService.Endpoint
 {
@@ -6,7 +8,7 @@ namespace StreamingService.Endpoint
     {
         public static IEndpointRouteBuilder MapMovieEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost("/movie", async (IFormFile file, IMovieRepository repository) =>
+            endpoints.MapPost("/movie/upload", async (IFormFile file, IMovieRepository repository) =>
             {
                 var uploadStream = file.OpenReadStream();
                 
@@ -18,9 +20,10 @@ namespace StreamingService.Endpoint
                     FileType = file.ContentType,
                     FileLength = file.Length
                 });
-                
+
             }).DisableAntiforgery(); //Feljkode 500 internal server error uden. Noget med at endpointet indeholder anti forgery metadata, og der skal være middleware eller sådan noget. Slår bare alt fra i form af sikkerhed omkring det vil jeg tro.
 
+            
             endpoints.MapGet("/movie/{fileName}", async (string fileName, IMovieRepository repository) =>
             {
                 var movie = await repository.SearchMovieAsync(fileName);
@@ -29,31 +32,28 @@ namespace StreamingService.Endpoint
                 {
                     return Results.NotFound();
                 }
-                
+
                 return Results.Ok(movie);
             });
-            
+
+            endpoints.MapGet("/movie/getall", async (IMovieRepository repository) =>
+            {
+                List<Movie> result = new List<Movie>();
+                
+                List<GridFSFileInfo> resultFromDB = await repository.GetAllMovies();
+
+                foreach (var document in resultFromDB)
+                {
+                    Movie movie = new Movie(document.Id, document.Filename, document.Length);
+                    
+                    result.Add(movie);
+                }
+                
+                return Results.Ok(result);
+            });
             
             
             return endpoints;
-
-            /*
-            endpoints.MapGet("/movies", (IMovieRepository repository) =>
-            {
-                List<Movie> allMovies = repository.GetAllMovies();
-
-                return Results.Ok(allMovies);
-
-            }).WithName("GetAllMovies");
-
-            endpoints.MapPost("/movie", (Movie movie, IMovieRepository repository) =>
-            {
-                repository.AddMovie(movie);
-
-                return Results.Ok(movie);
-            });
-            //Return all endpoints*/
-            
         }
     }
 }
