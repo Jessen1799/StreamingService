@@ -1,12 +1,13 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 using StreamingService.Model;
 
 namespace StreamingService.Repository
 {
     public class MovieRepository : IMovieRepository
     {
-        private readonly IMongoCollection<Movie> _movies;
+        private readonly GridFSBucket _bucket;
 
         public MovieRepository()
         {
@@ -16,23 +17,27 @@ namespace StreamingService.Repository
 
             var database = testClient.GetDatabase("dbStreaming");
 
-            _movies = database.GetCollection<Movie>("Movies");
+            _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
         }
 
-        public void AddMovie(Movie movie)
+        public async Task<ObjectId> AddMovieAsync(Stream stream, string fileName, string fileType)
         {
-            _movies.InsertOne(movie);
+            var id = await _bucket.UploadFromStreamAsync(fileName, stream); 
+            return id;
         }
 
-        public List<Movie> GetAllMovies()
+        public async Task<Movie?> SearchMovieAsync(string input)
         {
-            var filter = Builders<Movie>.Filter.Empty;
-            return _movies.Find(filter).ToList();
-        }
+            var filter = Builders<GridFSFileInfo>.Filter.Eq("filename", input);
+            
+            var queryResult = await _bucket.Find(filter).FirstOrDefaultAsync();
 
-        public async Task<Movie> GetMovie(string title)
-        {
-            return await _movies.Find(m => m.Title == title).FirstOrDefaultAsync();
+            if (queryResult == null)
+            {
+                return null;
+            }
+            
+            return new Movie(queryResult.Id, queryResult.Filename, queryResult.Length);
         }
     }
 }

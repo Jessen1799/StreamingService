@@ -1,20 +1,21 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace StreamingService.Model
 {
     public class Movie
     {
         [BsonId]
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Genre { get; set; }
+        public ObjectId Id { get; set; }
+        public string FileName { get; set; }
+        public long FileLength { get; set; }
 
 
-        public Movie(int id, string title, string genre)
+        public Movie(ObjectId id, string fileName, long fileLength)
         {
-            this.Id = id;
-            this.Title = title;
-            this.Genre = genre;
+            Id = id;
+            FileName = fileName;
+            FileLength = fileLength;
         }
     }
 }
