@@ -41,12 +41,31 @@ namespace StreamingService.Endpoint
                 foreach (var document in resultFromDB)
                 {
                     Movie movie = new Movie(document.Id, document.Filename, document.Length);
-
+                    
                     result.Add(movie);
                 }
                 
                 return Results.Ok(result);
             });
+            
+            endpoints.MapGet("/movies/stream/{fileName}", async (string fileName, IMovieRepository repository) =>
+            {
+                // Retrieve the movie stream, content type and original filename from the repository
+                var (stream, contentType, fileNameResult) =
+                    await repository.GetMovieStreamAsync(fileName);
+
+                // Check whether the requested movie exists.
+                if (stream == null)
+                {
+                    return Results.NotFound(new
+                    {
+                        message = $"Movie '{fileName}' not found."
+                    });
+                }
+                    
+                // Return the movie as a stream directly to the client.
+                return Results.Stream(stream, contentType: contentType, enableRangeProcessing: true);
+            }).WithName("StreamMovieFile");
             
             
             return endpoints;
