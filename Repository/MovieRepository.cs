@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Net.Mime;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 using StreamingService.Model;
@@ -15,7 +16,7 @@ namespace StreamingService.Repository
 
             MongoClient testClient = new MongoClient(connectionString);
 
-            var database = testClient.GetDatabase("dbStreaming");
+            //var database = testClient.GetDatabase("dbStreaming");
 
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
         }
@@ -38,6 +39,26 @@ namespace StreamingService.Repository
             }
             
             return new Movie(queryResult.Id, queryResult.Filename, queryResult.Length);
+        }
+
+
+        public async Task<(Stream Stream, string ContentType, string FileName)> GetMovieStreamAsync(string fileName)
+        {
+            var filter = Builders<GridFSFileInfo>.Filter.Eq(movie => movie.Filename, fileName);
+            var fileInfo = await (await _bucket.FindAsync(filter)).FirstOrDefaultAsync();
+
+            if (fileInfo == null)
+            {
+                return (null, null, null);
+            }
+            
+            var downloadStream = await _bucket.OpenDownloadStreamByNameAsync(fileName);
+            
+            var contentType = fileInfo.Metadata?.Contains("contentType") == true
+                ? fileInfo.Metadata["contentType"].AsString
+                : "application/octet-stream";
+
+            return (downloadStream, contentType, fileInfo.Filename);
         }
     }
 }

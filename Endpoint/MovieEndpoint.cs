@@ -1,4 +1,5 @@
-﻿using StreamingService.Model;
+﻿using StreamingService.Endpoint.DTO;
+using StreamingService.Model;
 using StreamingService.Repository;
 
 namespace StreamingService.Endpoint
@@ -9,7 +10,7 @@ namespace StreamingService.Endpoint
         {
             endpoints.MapPost("/movie", async (IFormFile file, IMovieRepository repository) =>
             {
-                var uploadStream = file.OpenReadStream();
+                var uploadStream = file.OpenReadStream();   
 
                 var id = await repository.AddMovieAsync(uploadStream, file.FileName, file.ContentType);
 
@@ -32,30 +33,27 @@ namespace StreamingService.Endpoint
                     return Results.NotFound();
                 }
                 
-                return Results.Ok(movie);
+                return Results.Ok(new MovieDTO(movie));
             });
             
             
+            endpoints.MapGet("/movies/stream/{fileName}", async (string fileName, IMovieRepository repository) =>
+                {
+                    // Call the repository method
+                    var (stream, contentType, fileNameResult) = await repository.GetMovieStreamAsync(fileName);
+
+                    if (stream == null)
+                    {
+                        return Results.NotFound(new { message = $"Movie '{fileName}' not found." });
+                    }
+
+                    // Return the stream to the client (ASP.NET Core handles cleanup/disposal automatically)
+                    return Results.Stream(stream, fileNameResult, enableRangeProcessing: true);
+                })
+                .WithName("StreamMovieFile");
             
             return endpoints;
-
-            /*
-            endpoints.MapGet("/movies", (IMovieRepository repository) =>
-            {
-                List<Movie> allMovies = repository.GetAllMovies();
-
-                return Results.Ok(allMovies);
-
-            }).WithName("GetAllMovies");
-
-            endpoints.MapPost("/movie", (Movie movie, IMovieRepository repository) =>
-            {
-                repository.AddMovie(movie);
-
-                return Results.Ok(movie);
-            });
-            //Return all endpoints*/
-            
         }
+        
     }
 }

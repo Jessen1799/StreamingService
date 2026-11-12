@@ -1,19 +1,21 @@
-﻿using StreamingService.Model;
+﻿using MongoDB.Bson;
+using StreamingService.Model;
 
 namespace StreamingService.Endpoint.DTO;
 
 public class MovieDTO
 {
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string Genre { get; set; }
-
+    public ObjectId Id { get; set; }
+    public string FileName { get; set; }
+    public long FileLength { get; set; }
 
     public MovieDTO(){ }
+
     public MovieDTO(Movie movie)
     {
         Id = movie.Id;
-        Title = movie.Title;
-        Genre = movie.Genre;
+        FileName = movie.FileName;
+        FileLength = movie.FileLength;
     }
+    
 }
