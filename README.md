@@ -29,9 +29,13 @@ The purpose of this project is to develop experience working with an API that al
 
 
 # Netflix Clone API
+
 **Version:** 1.0
+
 **Description:** A REST API for uploading, retrieving, searching, and streaming movies. Movie metadata is stored in MongoDB.
+
 **Base URL:** `http://localhost:5025`
+
 
 ## Endpoint 1: Upload Movie
 
