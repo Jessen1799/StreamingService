@@ -1,5 +1,5 @@
 using MongoDB.Driver.GridFS;
-using StreamingService.DTO;
+using StreamingService.Endpoint.DTO;
 using StreamingService.Model;
 using StreamingService.Repository;
 
@@ -48,7 +48,7 @@ namespace StreamingService.Endpoint
                 return Results.Ok(result);
             });
             
-            endpoints.MapGet("/movies/stream/{fileName}", async (string fileName, IMovieRepository repository) =>
+            endpoints.MapGet("/movie/stream/{fileName}", async (string fileName, IMovieRepository repository) =>
             {
                 // Retrieve the movie stream, content type and original filename from the repository
                 var (stream, contentType, fileNameResult) =

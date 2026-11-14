@@ -8,21 +8,36 @@ namespace StreamingService.Repository
     {
         private readonly GridFSBucket _bucket;
 
+        /// <summary>
+        /// When constructor is used a GridFSBucket object is ready to be used with our database
+        /// configurations.
+        /// </summary>
         public MovieRepository()
         {
-            var connectionString = "mongodb://localhost:27017/";
+            var connectionString = "mongodb://mongodb:27017/";
             var testClient = new MongoClient(connectionString);
 
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
         }
 
 
+        /// <summary>
+        /// Method for upload of a stream into mongo db asynchronous.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="fileName"></param>
         public async Task AddMovieAsync(Stream stream, string fileName)
         {
             await _bucket.UploadFromStreamAsync(fileName, stream);
         }
 
 
+        /// <summary>
+        /// Method searches in MongoDB for a movie based off filename and method invokers input.
+        /// Returns movie in mongodb format 'GridFSFileInfo' and is converted into a Movie.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public async Task<Movie?> SearchMovieAsync(string input)
         {
             var filter = Builders<GridFSFileInfo>.Filter.Eq("filename", input);
@@ -37,6 +52,11 @@ namespace StreamingService.Repository
             return new Movie(queryResult.Id, queryResult.Filename, queryResult.Length);
         }
 
+        /// <summary>
+        /// Method uses an empty filter to gather all movie meta data.
+        /// Uses Cursor to go through the collection -> Each document is being added to a list.
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<GridFSFileInfo>> GetAllMovies()
         {
             //Type: Object that hold info about a stored fs.files

@@ -1,4 +1,4 @@
-﻿namespace StreamingService.DTO;
+﻿namespace StreamingService.Endpoint.DTO;
 
 public class ResponseDTO
 {
