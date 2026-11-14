@@ -16,7 +16,6 @@ The API provides four endpoints for retrieving, streaming and uploading movies.
 - ASP.NET Core Minimal API
 - MongoDB
 - MongoDB GridFS
-- REST API
 
 ### Prerequisites
 - .NET SDK
@@ -33,8 +32,6 @@ The purpose of this project is to develop experience working with an API that al
 **Version:** 1.0
 
 **Description:** A REST API for uploading, retrieving, searching, and streaming movies. Movie metadata is stored in MongoDB.
-
-**Base URL:** `http://localhost:5025`
 
 
 ## Endpoint 1: Upload Movie
@@ -87,7 +84,7 @@ The purpose of this project is to develop experience working with an API that al
 
 **Method:** [GET]
 
-**URL:** `/movies/stream/{fileName}`
+**URL:** `/movie/stream/{fileName}`
 
 **Description:** Streams the selected movie using its filename.
 
