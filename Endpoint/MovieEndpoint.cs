@@ -1,5 +1,5 @@
 using MongoDB.Driver.GridFS;
-using StreamingService.DTO;
+using StreamingService.Endpoint.DTO;
 using StreamingService.Model;
 using StreamingService.Repository;
 

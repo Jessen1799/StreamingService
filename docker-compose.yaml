@@ -1,9 +1,20 @@
 ﻿services:
+  
   mongodb:
     image: mongo:latest
     container_name: streamingservice
     ports:
       - "27017:27017"
+    
+  streaming service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streamingservice
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
       
       
     

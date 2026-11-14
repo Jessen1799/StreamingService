@@ -14,7 +14,7 @@ namespace StreamingService.Repository
         /// </summary>
         public MovieRepository()
         {
-            var connectionString = "mongodb://localhost:27017/";
+            var connectionString = "mongodb://mongodb:27017/";
             var testClient = new MongoClient(connectionString);
 
             _bucket = new GridFSBucket(testClient.GetDatabase("dbStreaming"));
